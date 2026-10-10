@@ -17,7 +17,7 @@
 
             //Descendente
             laLista.Sort((nombre1, nombre2) => nombre2.CompareTo(nombre1));
-
+         
             foreach (var item in laLista)
             {
                 Console.WriteLine(item);
@@ -29,7 +29,7 @@
             Console.WriteLine();
             laLista.Sort((nombre1, nombre2) =>
             {
-                return nombre2.Length.CompareTo(nombre1.Length);
+                return nombre1.Length.CompareTo(nombre2.Length);
             });
 
             Console.WriteLine("Mostrando ordenamiento por orden de más a menos");
