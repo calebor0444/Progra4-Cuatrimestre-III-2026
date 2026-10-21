@@ -21,7 +21,8 @@ namespace ConexionALaBaseDeDatos.Ejemplos
 
                     if (cliente != null)
                         Console.WriteLine(cliente.FirstName);
-                
+                    else
+                        Console.WriteLine("Cliente no encontrado");
                 }
             }
             catch (Exception ex)

@@ -19,14 +19,14 @@ namespace ConexionALaBaseDeDatos.Ejemplos
                     //Expresión de metodo
                     var lasCanciones = elContextoBd.Tracks
                         .OrderBy(c => c.Name)
-                        .Select(c => c.Name)
+                        .Select(c => new { c.Name ,c.Milliseconds})
                         .Take(100)
                         .ToList();
 
-                    Console.WriteLine("Primeras 10 canciones en orden alfabetico:");
+                    Console.WriteLine("Primeras 100 canciones en orden alfabetico:");
                     foreach (var cancion in lasCanciones)
                     {
-                        Console.WriteLine($"{cancion}");
+                        Console.WriteLine($"{cancion.Name} duración: {cancion.Milliseconds} ms");
                     }
                 }
             }

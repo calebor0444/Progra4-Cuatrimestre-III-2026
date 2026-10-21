@@ -19,12 +19,12 @@ namespace ConexionALaBaseDeDatos.Ejemplos
                                     select new
                                     {
                                         cliente.FirstName,
-                                        cliente.LastName
+                                        cliente.LastName,
+                                        NombreCompleto = cliente.FirstName + " " + cliente.LastName,
+                                       
                                     }).ToList();
 
-                   
 
-                    //Sintaxis de metodo
                     var losClientes = elContextoBd.Customers
                         .Select(c => new
                         {
