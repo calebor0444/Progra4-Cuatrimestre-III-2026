@@ -1,0 +1,35 @@
+@using TiendaFluent.Entities
+@model List<Producto>
+@{
+    ViewData["Title"] = "Productos";
+    var usd = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">Productos</h1>
+    <a class="btn btn-primary" asp-action="Create">Nuevo producto</a>
+</div>
+<p class="text-muted small"><code>Sku</code> es llave alterna; <code>Precio</code> y <code>Stock</code> tienen restricciones CHECK; las etiquetas son una relación N:N con la tabla <code>ProductoEtiquetas</code>.</p>
+
+<table class="table table-hover bg-white align-middle">
+    <thead class="table-light"><tr><th>SKU</th><th>Nombre</th><th>Categoría</th><th>Etiquetas</th><th class="text-end">Precio</th><th class="text-end">Stock</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var p in Model)
+    {
+        <tr>
+            <td><code>@p.Sku</code></td>
+            <td class="fw-semibold">@p.Nombre</td>
+            <td>@p.Categoria.Nombre</td>
+            <td>@foreach (var e in p.Etiquetas) { <span class="badge text-bg-light border me-1">@e.Nombre</span> }</td>
+            <td class="text-end">@p.Precio.ToString("C2", usd)</td>
+            <td class="text-end">@p.Stock</td>
+            <td class="text-end text-nowrap">
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@p.Id">Editar</a>
+                <form asp-action="Delete" asp-route-id="@p.Id" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar @p.Nombre?')">
+                    <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

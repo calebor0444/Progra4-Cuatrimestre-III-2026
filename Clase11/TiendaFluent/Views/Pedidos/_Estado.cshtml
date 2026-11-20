@@ -1,0 +1,11 @@
+@model TiendaFluent.Entities.EstadoPedido
+@{
+    var clase = Model switch
+    {
+        TiendaFluent.Entities.EstadoPedido.Pendiente => "text-bg-warning",
+        TiendaFluent.Entities.EstadoPedido.Pagado => "text-bg-success",
+        TiendaFluent.Entities.EstadoPedido.Enviado => "text-bg-primary",
+        _ => "text-bg-secondary",
+    };
+}
+<span class="badge @clase">@Model</span>
