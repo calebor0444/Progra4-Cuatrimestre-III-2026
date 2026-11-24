@@ -1,0 +1,34 @@
+@using TiendaFluent.Entities
+@model List<Etiqueta>
+@{
+    ViewData["Title"] = "Etiquetas";
+}
+
+<h1 class="h3 mb-1">Etiquetas</h1>
+<p class="text-muted small">Índice único sobre <code>Nombre</code>. Al borrar una etiqueta, sus filas en la tabla intermedia <code>ProductoEtiquetas</code> se eliminan en cascada.</p>
+
+<form asp-action="Create" method="post" class="d-flex gap-2 mb-3" style="max-width:480px">
+    <input name="nombre" class="form-control" placeholder="Nueva etiqueta" maxlength="50" required />
+    <button class="btn btn-primary text-nowrap">Agregar</button>
+</form>
+
+<table class="table table-hover bg-white align-middle" style="max-width:760px">
+    <thead class="table-light"><tr><th>Nombre</th><th>Productos que la usan</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var e in Model)
+    {
+        <tr>
+            <td class="fw-semibold">@e.Nombre</td>
+            <td>@(e.Productos.Count == 0 ? "—" : string.Join(", ", e.Productos.Select(p => p.Nombre)))</td>
+            <td class="text-end">
+                @if (User.IsInRole(Roles.Administrador))
+                {
+                    <form asp-action="Delete" asp-route-id="@e.Id" method="post" onsubmit="return confirm('¿Eliminar la etiqueta @e.Nombre?')">
+                        <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

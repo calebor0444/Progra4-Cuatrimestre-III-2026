@@ -1,0 +1,44 @@
+@using TiendaFluent.Entities
+@model PedidoCrearVM
+@{
+    ViewData["Title"] = "Nuevo pedido";
+    var productos = (List<Producto>)ViewBag.Productos;
+}
+
+<h1 class="h3 mb-3">Nuevo pedido</h1>
+<form asp-action="Create" method="post" class="card card-body" style="max-width:760px">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="mb-3" style="max-width:360px">
+        <label asp-for="ClienteId" class="form-label"></label>
+        <select asp-for="ClienteId" asp-items="ViewBag.Clientes" class="form-select">
+            <option value="">— Selecciona —</option>
+        </select>
+    </div>
+
+    <table class="table table-sm align-middle">
+        <thead><tr><th>Producto</th><th style="width:130px">Cantidad</th></tr></thead>
+        <tbody>
+        @for (var i = 0; i < Model.Lineas.Count; i++)
+        {
+            <tr>
+                <td>
+                    <select name="Lineas[@i].ProductoId" class="form-select">
+                        <option value="">—</option>
+                        @foreach (var p in productos)
+                        {
+                            <option value="@p.Id" selected="@(Model.Lineas[i].ProductoId == p.Id)">@p.Nombre · @p.Precio.ToString("C2") (stock @p.Stock)</option>
+                        }
+                    </select>
+                </td>
+                <td><input name="Lineas[@i].Cantidad" value="@Model.Lineas[i].Cantidad" type="number" min="1" class="form-control" /></td>
+            </tr>
+        }
+        </tbody>
+    </table>
+    <div class="form-text mb-3">Si eliges el mismo producto en dos líneas se suman las cantidades: la llave compuesta de DetallesPedido no permite repetirlo.</div>
+
+    <div>
+        <button class="btn btn-primary">Crear pedido</button>
+        <a class="btn btn-link" asp-action="Index">Cancelar</a>
+    </div>
+</form>

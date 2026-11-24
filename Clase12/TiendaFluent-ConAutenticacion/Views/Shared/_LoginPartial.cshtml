@@ -1,0 +1,26 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Usuario> Usuarios
+
+@* Menú de la cuenta en la barra superior *@
+<ul class="navbar-nav">
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        var usuario = await Usuarios.GetUserAsync(User);
+        <li class="nav-item">
+            <span class="nav-link text-light">
+                @(usuario?.NombreCompleto ?? User.Identity.Name)
+                <span class="badge bg-light text-dark ms-1">@(User.IsInRole(Roles.Administrador) ? Roles.Administrador : Roles.Empleado)</span>
+            </span>
+        </li>
+        <li class="nav-item">
+            <form asp-controller="Cuenta" asp-action="Logout" method="post" class="d-inline">
+                <button class="nav-link btn btn-link">Cerrar sesión</button>
+            </form>
+        </li>
+    }
+    else
+    {
+        <li class="nav-item"><a class="nav-link" asp-controller="Cuenta" asp-action="Registro">Registrarse</a></li>
+        <li class="nav-item"><a class="nav-link" asp-controller="Cuenta" asp-action="Login">Iniciar sesión</a></li>
+    }
+</ul>

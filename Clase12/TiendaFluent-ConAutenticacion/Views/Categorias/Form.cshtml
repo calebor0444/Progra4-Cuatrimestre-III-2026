@@ -1,0 +1,28 @@
+@model CategoriaFormVM
+@{
+    var nueva = Model.Id == 0;
+    ViewData["Title"] = nueva ? "Nueva categoría" : "Editar categoría";
+}
+
+<h1 class="h3 mb-3">@ViewData["Title"]</h1>
+<form asp-action="@(nueva ? "Create" : "Edit")" asp-route-id="@(nueva ? null : Model.Id)" method="post" class="card card-body" style="max-width:560px">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="mb-3">
+        <label asp-for="Nombre" class="form-label"></label>
+        <input asp-for="Nombre" class="form-control" />
+        <span asp-validation-for="Nombre" class="text-danger small"></span>
+    </div>
+    <div class="mb-3">
+        <label asp-for="CategoriaPadreId" class="form-label"></label>
+        <select asp-for="CategoriaPadreId" asp-items="ViewBag.Padres" class="form-select">
+            <option value="">— Sin padre (categoría raíz) —</option>
+        </select>
+        <span asp-validation-for="CategoriaPadreId" class="text-danger small"></span>
+    </div>
+    <div>
+        <button class="btn btn-primary">Guardar</button>
+        <a class="btn btn-link" asp-action="Index">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

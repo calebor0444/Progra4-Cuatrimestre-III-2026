@@ -1,0 +1,7 @@
+@{
+    ViewData["Title"] = "Acceso denegado";
+}
+
+<h1 class="h3 mb-3 text-danger">@ViewData["Title"]</h1>
+<p>Tu usuario no tiene permiso para realizar esta acción. Solo el rol <strong>Administrador</strong> puede eliminar registros.</p>
+<a class="btn btn-outline-secondary" asp-controller="Home" asp-action="Index">Volver al inicio</a>

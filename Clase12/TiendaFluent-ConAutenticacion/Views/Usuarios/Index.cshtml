@@ -1,0 +1,39 @@
+@model List<UsuarioListaVM>
+@{
+    ViewData["Title"] = "Usuarios";
+    var idActual = (string)ViewBag.IdActual;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-1">
+    <h1 class="h3 mb-0">Usuarios</h1>
+    <a class="btn btn-primary" asp-action="Create">Nuevo usuario</a>
+</div>
+<p class="text-muted small">Solo el rol <strong>Administrador</strong> puede entrar aquí (<code>[Authorize(Roles = Roles.Administrador)]</code> en el controlador). Los usuarios se manejan con <code>UserManager</code>.</p>
+
+<table class="table table-hover bg-white align-middle">
+    <thead class="table-light"><tr><th>Nombre</th><th>Correo</th><th>Rol</th><th>Estado</th><th></th></tr></thead>
+    <tbody>
+    @foreach (var u in Model)
+    {
+        var esYo = u.Id == idActual;
+        <tr>
+            <td class="fw-semibold">@u.NombreCompleto @if (esYo) { <span class="badge bg-secondary ms-1">Tú</span> }</td>
+            <td>@u.Email</td>
+            <td><span class="badge @(u.Rol == Roles.Administrador ? "bg-primary" : "bg-light text-dark border")">@u.Rol</span></td>
+            <td>@if (u.Bloqueado) { <span class="badge bg-danger">Bloqueado</span> } else { <span class="badge bg-success">Activo</span> }</td>
+            <td class="text-end text-nowrap">
+                <a class="btn btn-sm btn-outline-secondary" asp-action="Edit" asp-route-id="@u.Id">Editar</a>
+                @if (!esYo)
+                {
+                    <form asp-action="CambiarBloqueo" asp-route-id="@u.Id" method="post" class="d-inline">
+                        <button class="btn btn-sm @(u.Bloqueado ? "btn-outline-success" : "btn-outline-warning")">@(u.Bloqueado ? "Desbloquear" : "Bloquear")</button>
+                    </form>
+                    <form asp-action="Delete" asp-route-id="@u.Id" method="post" class="d-inline" onsubmit="return confirm('¿Eliminar al usuario @u.Email?')">
+                        <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                    </form>
+                }
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>

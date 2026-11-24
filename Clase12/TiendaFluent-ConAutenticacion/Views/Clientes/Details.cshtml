@@ -1,0 +1,70 @@
+@model ClienteDetalleVM
+@{
+    var c = Model.Cliente;
+    ViewData["Title"] = c.Nombre;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">@c.Nombre</h1>
+    <div>
+        <a class="btn btn-outline-secondary" asp-action="Edit" asp-route-id="@c.Id">Editar</a>
+        <a class="btn btn-link" asp-action="Index">Volver</a>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body">
+            <h2 class="h6 text-muted">Datos <span class="small">(tabla Clientes)</span></h2>
+            <div>@c.Email</div>
+            <div class="small text-muted mt-2">Creado: @Model.FechaCreacion.ToLocalTime().ToString("g")</div>
+            <div class="small text-muted">↳ propiedad sombra <code>FechaCreacion</code></div>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body">
+            <h2 class="h6 text-muted">Dirección <span class="small">(tipo propio OwnsOne)</span></h2>
+            <div>@c.Direccion.Calle</div>
+            <div>@c.Direccion.Ciudad @c.Direccion.CodigoPostal</div>
+            <div class="small text-muted mt-2">↳ columnas Calle, Ciudad y CodigoPostal de Clientes</div>
+        </div></div>
+    </div>
+    <div class="col-md-4">
+        <div class="card h-100"><div class="card-body">
+            <h2 class="h6 text-muted">Perfil <span class="small">(relación 1:1)</span></h2>
+            @if (c.Perfil is null)
+            {
+                <div class="text-muted">Sin perfil. Es opcional desde el lado del cliente.</div>
+            }
+            else
+            {
+                <div>Teléfono: @(c.Perfil.Telefono ?? "—")</div>
+                <div>Nacimiento: @(c.Perfil.FechaNacimiento?.ToString("d") ?? "—")</div>
+                <div class="small text-muted mt-2">↳ tabla PerfilesCliente, FK única ClienteId</div>
+            }
+        </div></div>
+    </div>
+</div>
+
+<h2 class="h5">Pedidos <span class="text-muted small">(relación 1:N)</span></h2>
+@if (c.Pedidos.Count == 0)
+{
+    <p class="text-muted">Este cliente no tiene pedidos.</p>
+}
+else
+{
+    <table class="table table-sm bg-white">
+        <thead class="table-light"><tr><th>Número</th><th>Fecha</th><th>Estado</th><th class="text-end">Total</th></tr></thead>
+        <tbody>
+        @foreach (var p in c.Pedidos)
+        {
+            <tr>
+                <td><a asp-controller="Pedidos" asp-action="Details" asp-route-id="@p.Id">#@p.Numero</a></td>
+                <td>@p.Fecha.ToLocalTime().ToString("g")</td>
+                <td>@p.Estado</td>
+                <td class="text-end">@p.Total.ToString("C2")</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}

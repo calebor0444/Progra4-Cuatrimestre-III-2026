@@ -1,0 +1,76 @@
+@model PagoFormVM
+@{
+    ViewData["Title"] = "Registrar pago";
+}
+
+<h1 class="h3 mb-1">Registrar pago · pedido #@Model.NumeroPedido</h1>
+<p class="text-muted">Pendiente: @Model.Pendiente.ToString("C2"). Cada tipo de pago es una subclase de <code>Pago</code>; todos se guardan en la tabla <code>Pagos</code>.</p>
+
+<form asp-action="RegistrarPago" method="post" class="card card-body" style="max-width:560px">
+    <input type="hidden" asp-for="PedidoId" />
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="mb-3">
+        <label class="form-label">Tipo de pago</label>
+        <div class="d-flex gap-3">
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="Tipo" value="Tarjeta" id="tipo-tarjeta" />
+                <label class="form-check-label" for="tipo-tarjeta">Tarjeta</label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" asp-for="Tipo" value="Transferencia" id="tipo-transf" />
+                <label class="form-check-label" for="tipo-transf">Transferencia</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Monto" class="form-label"></label>
+        <input asp-for="Monto" class="form-control" type="number" step="0.01" min="0.01" />
+        <span asp-validation-for="Monto" class="text-danger small"></span>
+    </div>
+
+    <div id="campos-tarjeta" class="row g-3 mb-3">
+        <div class="col-6">
+            <label asp-for="Marca" class="form-label"></label>
+            <input asp-for="Marca" class="form-control" placeholder="Visa, Mastercard…" />
+            <span asp-validation-for="Marca" class="text-danger small"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="UltimosDigitos" class="form-label"></label>
+            <input asp-for="UltimosDigitos" class="form-control" maxlength="4" />
+            <span asp-validation-for="UltimosDigitos" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <div id="campos-transferencia" class="row g-3 mb-3">
+        <div class="col-6">
+            <label asp-for="Banco" class="form-label"></label>
+            <input asp-for="Banco" class="form-control" />
+            <span asp-validation-for="Banco" class="text-danger small"></span>
+        </div>
+        <div class="col-6">
+            <label asp-for="Referencia" class="form-label"></label>
+            <input asp-for="Referencia" class="form-control" />
+            <span asp-validation-for="Referencia" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <div>
+        <button class="btn btn-primary">Guardar pago</button>
+        <a class="btn btn-link" asp-action="Details" asp-route-id="@Model.PedidoId">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function mostrarCampos() {
+            const tarjeta = document.getElementById('tipo-tarjeta').checked;
+            document.getElementById('campos-tarjeta').style.display = tarjeta ? '' : 'none';
+            document.getElementById('campos-transferencia').style.display = tarjeta ? 'none' : '';
+        }
+        document.querySelectorAll('input[name="Tipo"]').forEach(r => r.addEventListener('change', mostrarCampos));
+        mostrarCampos();
+    </script>
+}

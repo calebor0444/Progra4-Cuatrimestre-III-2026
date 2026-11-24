@@ -1,0 +1,62 @@
+@model ClienteFormVM
+@{
+    var nuevo = Model.Id == 0;
+    ViewData["Title"] = nuevo ? "Nuevo cliente" : "Editar cliente";
+}
+
+<h1 class="h3 mb-3">@ViewData["Title"]</h1>
+<form asp-action="@(nuevo ? "Create" : "Edit")" asp-route-id="@(nuevo ? null : Model.Id)" method="post" class="card card-body" style="max-width:760px">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <h2 class="h6 text-muted">Cliente</h2>
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <label asp-for="Nombre" class="form-label"></label>
+            <input asp-for="Nombre" class="form-control" />
+            <span asp-validation-for="Nombre" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="Email" class="form-label">Correo</label>
+            <input asp-for="Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+    </div>
+
+    <h2 class="h6 text-muted">Dirección <span class="small">· tipo propio, mismas columnas de Clientes</span></h2>
+    <div class="row g-3 mb-4">
+        <div class="col-md-6">
+            <label asp-for="Calle" class="form-label"></label>
+            <input asp-for="Calle" class="form-control" />
+            <span asp-validation-for="Calle" class="text-danger small"></span>
+        </div>
+        <div class="col-md-4">
+            <label asp-for="Ciudad" class="form-label"></label>
+            <input asp-for="Ciudad" class="form-control" />
+            <span asp-validation-for="Ciudad" class="text-danger small"></span>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="CodigoPostal" class="form-label"></label>
+            <input asp-for="CodigoPostal" class="form-control" />
+        </div>
+    </div>
+
+    <h2 class="h6 text-muted">Perfil <span class="small">· relación 1:1 opcional (déjalo vacío para no crearlo)</span></h2>
+    <div class="row g-3">
+        <div class="col-md-6">
+            <label asp-for="Telefono" class="form-label"></label>
+            <input asp-for="Telefono" class="form-control" />
+            <span asp-validation-for="Telefono" class="text-danger small"></span>
+        </div>
+        <div class="col-md-6">
+            <label asp-for="FechaNacimiento" class="form-label"></label>
+            <input asp-for="FechaNacimiento" class="form-control" />
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <button class="btn btn-primary">Guardar</button>
+        <a class="btn btn-link" asp-action="Index">Cancelar</a>
+    </div>
+</form>
+
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

@@ -1,0 +1,27 @@
+@using TiendaFluent.Entities
+@model List<Pedido>
+@{
+    ViewData["Title"] = "Pedidos";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3 m-0">Pedidos</h1>
+    <a class="btn btn-primary" asp-action="Create">Nuevo pedido</a>
+</div>
+<p class="text-muted small"><code>Numero</code> sale de la secuencia <code>NumerosPedido</code> (empieza en 1000), <code>Fecha</code> de <code>GETUTCDATE()</code> y <code>Estado</code> se guarda como texto.</p>
+
+<table class="table table-hover bg-white align-middle">
+    <thead class="table-light"><tr><th>Número</th><th>Fecha</th><th>Cliente</th><th>Estado</th><th class="text-end">Total</th></tr></thead>
+    <tbody>
+    @foreach (var p in Model)
+    {
+        <tr>
+            <td><a class="fw-semibold" asp-action="Details" asp-route-id="@p.Id">#@p.Numero</a></td>
+            <td>@p.Fecha.ToLocalTime().ToString("g")</td>
+            <td>@p.Cliente.Nombre</td>
+            <td><partial name="_Estado" model="p.Estado" /></td>
+            <td class="text-end">@p.Total.ToString("C2")</td>
+        </tr>
+    }
+    </tbody>
+</table>
