@@ -10,12 +10,48 @@ namespace TiendaFluent.Services;
 // restricciones CHECK (guía 8.2) y OnDelete Restrict desde DetallesPedido (guía 10)
 public class ProductoService(TiendaContext db) : IProductoService
 {
-    public Task<List<Producto>> ListarAsync() =>
-        db.Productos
+    public async Task<List<Producto>> BuscarAsync(ProductoFiltroVM filtro)
+    {
+        // 1. Partimos de una consulta "abierta" (IQueryable): todavía NO va a la base de datos
+        IQueryable<Producto> consulta = db.Productos
             .Include(p => p.Categoria)
-            .Include(p => p.Etiquetas)
-            .OrderBy(p => p.Nombre)
-            .ToListAsync();
+            .Include(p => p.Etiquetas);
+
+        // 2. Agregamos un Where por cada criterio que el usuario llenó.
+        //    Varios Where seguidos equivalen a unirlos con AND.
+        if (!string.IsNullOrWhiteSpace(filtro.Texto))
+        {
+            var texto = filtro.Texto.Trim();
+            consulta = consulta.Where(p => p.Nombre.Contains(texto) || p.Sku.Contains(texto));
+        }
+
+        if (filtro.CategoriaId is not null)
+            consulta = consulta.Where(p => p.CategoriaId == filtro.CategoriaId);
+
+        // Filtro sobre la relación N:N: productos que tengan AL MENOS una etiqueta con ese Id
+        if (filtro.EtiquetaId is not null)
+            consulta = consulta.Where(p => p.Etiquetas.Any(e => e.Id == filtro.EtiquetaId));
+
+        if (filtro.PrecioMin is not null)
+            consulta = consulta.Where(p => p.Precio >= filtro.PrecioMin);
+
+        if (filtro.PrecioMax is not null)
+            consulta = consulta.Where(p => p.Precio <= filtro.PrecioMax);
+
+        if (filtro.SoloConStock)
+            consulta = consulta.Where(p => p.Stock > 0);
+
+        // 3. Ordenamiento elegido por el usuario
+        consulta = filtro.Orden switch
+        {
+            "precio_asc" => consulta.OrderBy(p => p.Precio),
+            "precio_desc" => consulta.OrderByDescending(p => p.Precio),
+            _ => consulta.OrderBy(p => p.Nombre),
+        };
+
+        // 4. Recién aquí EF traduce todo a un solo SELECT ... WHERE ... ORDER BY y lo ejecuta
+        return await consulta.ToListAsync();
+    }
 
     public async Task<CatalogosProducto> CatalogosAsync() => new(
         await db.Categorias.OrderBy(c => c.Nombre).ToListAsync(),

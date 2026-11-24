@@ -1,8 +1,9 @@
 @using TiendaFluent.Entities
-@model List<Producto>
+@model ProductoListadoVM
 @{
     ViewData["Title"] = "Productos";
     var usd = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+    var hayFiltros = Context.Request.QueryString.HasValue;
 }
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -11,10 +12,64 @@
 </div>
 <p class="text-muted small"><code>Sku</code> es llave alterna; <code>Precio</code> y <code>Stock</code> tienen restricciones CHECK; las etiquetas son una relación N:N con la tabla <code>ProductoEtiquetas</code>.</p>
 
+@* method="get": los filtros viajan en la URL, así la búsqueda se puede recargar o compartir *@
+<form asp-action="Index" method="get" class="card card-body bg-white mb-3">
+    <div class="row g-2 align-items-end">
+        <div class="col-md-3">
+            <label asp-for="Filtro.Texto" class="form-label small"></label>
+            <input asp-for="Filtro.Texto" class="form-control form-control-sm" placeholder="Ej.: café o CAF-001" />
+        </div>
+        <div class="col-md-2">
+            <label asp-for="Filtro.CategoriaId" class="form-label small"></label>
+            <select asp-for="Filtro.CategoriaId" class="form-select form-select-sm"
+                    asp-items="@(new SelectList(Model.Categorias, nameof(Categoria.Id), nameof(Categoria.Nombre)))">
+                <option value="">Todas</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <label asp-for="Filtro.EtiquetaId" class="form-label small"></label>
+            <select asp-for="Filtro.EtiquetaId" class="form-select form-select-sm"
+                    asp-items="@(new SelectList(Model.Etiquetas, nameof(Etiqueta.Id), nameof(Etiqueta.Nombre)))">
+                <option value="">Todas</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <label asp-for="Filtro.PrecioMin" class="form-label small"></label>
+            <input asp-for="Filtro.PrecioMin" type="number" min="0" step="0.01" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-1">
+            <label asp-for="Filtro.PrecioMax" class="form-label small"></label>
+            <input asp-for="Filtro.PrecioMax" type="number" min="0" step="0.01" class="form-control form-control-sm" />
+        </div>
+        <div class="col-md-2">
+            <label asp-for="Filtro.Orden" class="form-label small">Ordenar por</label>
+            <select asp-for="Filtro.Orden" class="form-select form-select-sm">
+                <option value="">Nombre</option>
+                <option value="precio_asc">Precio: menor a mayor</option>
+                <option value="precio_desc">Precio: mayor a menor</option>
+            </select>
+        </div>
+        <div class="col-md-1">
+            <div class="form-check mb-1">
+                <input asp-for="Filtro.SoloConStock" class="form-check-input" />
+                <label asp-for="Filtro.SoloConStock" class="form-check-label small"></label>
+            </div>
+        </div>
+    </div>
+    <div asp-validation-summary="All" class="text-danger small mt-2"></div>
+    <div class="d-flex gap-2 mt-2">
+        <button class="btn btn-sm btn-primary">Buscar</button>
+        <a class="btn btn-sm btn-outline-secondary" asp-action="Index">Limpiar filtros</a>
+        <span class="ms-auto text-muted small align-self-center">
+            @Model.Productos.Count producto(s)@(hayFiltros ? " encontrados con los filtros aplicados" : "")
+        </span>
+    </div>
+</form>
+
 <table class="table table-hover bg-white align-middle">
     <thead class="table-light"><tr><th>SKU</th><th>Nombre</th><th>Categoría</th><th>Etiquetas</th><th class="text-end">Precio</th><th class="text-end">Stock</th><th></th></tr></thead>
     <tbody>
-    @foreach (var p in Model)
+    @foreach (var p in Model.Productos)
     {
         <tr>
             <td><code>@p.Sku</code></td>
@@ -33,6 +88,10 @@
                 }
             </td>
         </tr>
+    }
+    @if (Model.Productos.Count == 0)
+    {
+        <tr><td colspan="7" class="text-center text-muted py-4">No hay productos que coincidan con la búsqueda.</td></tr>
     }
     </tbody>
 </table>

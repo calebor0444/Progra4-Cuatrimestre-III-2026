@@ -13,7 +13,20 @@ namespace TiendaFluent.Controllers;
 [Authorize]
 public class ProductosController(IProductoService productos) : Controller
 {
-    public async Task<IActionResult> Index() => View(await productos.ListarAsync());
+    // Los filtros llegan desde la URL (formulario con method="get")
+    public async Task<IActionResult> Index([FromQuery] ProductoFiltroVM filtro)
+    {
+        var catalogos = await productos.CatalogosAsync();
+        var vm = new ProductoListadoVM
+        {
+            Filtro = filtro,
+            Categorias = catalogos.Categorias,
+            Etiquetas = catalogos.Etiquetas,
+            // Si los filtros no son válidos (p. ej. mínimo > máximo) se muestra el error sin resultados
+            Productos = ModelState.IsValid ? await productos.BuscarAsync(filtro) : new(),
+        };
+        return View(vm);
+    }
 
     public Task<IActionResult> Create() => MostrarFormulario(new ProductoFormVM());
 

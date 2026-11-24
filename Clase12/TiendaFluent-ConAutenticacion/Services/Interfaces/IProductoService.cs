@@ -8,7 +8,10 @@ public record CatalogosProducto(List<Categoria> Categorias, List<Etiqueta> Etiqu
 
 public interface IProductoService
 {
-    Task<List<Producto>> ListarAsync();
+    // Búsqueda con LINQ: solo aplica los criterios que vengan con valor
+    // (sin ningún filtro devuelve todos los productos)
+    Task<List<Producto>> BuscarAsync(ProductoFiltroVM filtro);
+
     Task<CatalogosProducto> CatalogosAsync();
     Task<ProductoFormVM?> ObtenerFormularioAsync(int id);
     Task<Resultado> CrearAsync(ProductoFormVM vm);
