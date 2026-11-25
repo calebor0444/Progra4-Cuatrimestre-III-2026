@@ -83,7 +83,8 @@ namespace PeliculasMVC.Controllers
         // GET: PeliculasController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var laPelicula = Servicios.Peliculas.ObtenerPelicula(id);
+            return View(laPelicula);
         }
 
         // POST: PeliculasController/Delete/5
@@ -93,6 +94,7 @@ namespace PeliculasMVC.Controllers
         {
             try
             {
+                Servicios.Peliculas.EliminarPelicula(id);
                 return RedirectToAction(nameof(Index));
             }
             catch

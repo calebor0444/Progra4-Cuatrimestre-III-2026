@@ -22,6 +22,15 @@ namespace PeliculasMVC.Servicios
             return peliculas;
         }
 
+        internal static void EliminarPelicula(int id)
+        {
+            var pelicula = peliculas.FirstOrDefault(p => p.Id == id);
+            if (pelicula != null)
+            {
+                peliculas.Remove(pelicula);
+            }
+        }
+
         internal static void GuardarPelicula(Models.ViewModels.Peliculas pelicula)
         {
             bool existe = peliculas.Any(p => p.Titulo.Equals(pelicula.Titulo, StringComparison.OrdinalIgnoreCase));

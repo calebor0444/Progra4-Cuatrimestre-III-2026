@@ -1,9 +1,12 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TiendaFluent.Entities;
 using TiendaFluent.Models;
 using TiendaFluent.Services.Interfaces;
 
 namespace TiendaFluent.Controllers;
+
 
 public class HomeController(IResumenService resumen) : Controller
 {
